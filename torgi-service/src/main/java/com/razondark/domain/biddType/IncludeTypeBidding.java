@@ -1,4 +1,4 @@
-package com.razondark.domain.biddForm;
+package com.razondark.domain.biddType;
 
 import lombok.Data;
 

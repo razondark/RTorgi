@@ -1,4 +1,4 @@
-package com.razondark.web.dto;
+package com.razondark.dto;
 
 /*
     dto информации о типе предложения

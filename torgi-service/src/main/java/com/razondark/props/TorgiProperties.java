@@ -13,6 +13,9 @@ public class TorgiProperties {
     private String dynamicAttrSearchOptionLink;
     private String ownershipFormLink;
     private String typeTransactionLink;
+    private String categoriesLink;
+    private String specificationsLink;
 
     private String searchLotsLink;
+    private String lotInfoLink;
 }
