@@ -30,9 +30,10 @@ public class TorgiConfig {
     @Bean
     Caffeine<Object, Object> caffeineCacheBuilder() {
         return Caffeine.newBuilder()
-                .initialCapacity(100)
-                .maximumSize(500)
+                .initialCapacity(50)
+                .maximumSize(200)
                 .expireAfterAccess(60, TimeUnit.MINUTES)
+                //.refreshAfterWrite(30, TimeUnit.MINUTES)
                 .recordStats();
     }
 }

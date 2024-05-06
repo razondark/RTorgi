@@ -11,6 +11,7 @@ import com.razondark.web.dto.response.BiddTypeResponse;
 import com.razondark.web.dto.response.CategoriesResponse;
 import com.razondark.web.dto.response.SpecificationsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     private final TorgiProperties torgiProperties;
 
     @Override
+    @Cacheable(cacheNames = "categories", key = "#root.method.name")
     public CategoriesResponse getCategories() {
         var response = restTemplate.exchange(torgiProperties.getCategoriesLink(),
                 HttpMethod.GET,
@@ -41,6 +43,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     }
 
     @Override
+    @Cacheable(cacheNames = "bidd-types", key = "#root.method.name")
     public BiddTypeResponse getBiddTypes() {
         var response = restTemplate.exchange(torgiProperties.getBiddTypeLink(),
                 HttpMethod.GET,
@@ -54,6 +57,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     }
 
     @Override
+    @Cacheable(cacheNames = "attributes", key = "#root.method.name")
     public AttributesResponse getAttributes() {
         var response = restTemplate.exchange(torgiProperties.getDynamicAttrSearchOptionLink(),
                 HttpMethod.GET,
@@ -67,6 +71,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     }
 
     @Override
+    @Cacheable(cacheNames = "specifications", key = "#root.method.name")
     public SpecificationsResponse getSpecifications() {
         var response = restTemplate.exchange(torgiProperties.getSpecificationsLink(),
                 HttpMethod.GET,

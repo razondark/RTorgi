@@ -23,16 +23,17 @@ public class TorgiController {
     }
 
     @GetMapping("subject")
-    public List<LotDto> getLotsBySubject(@RequestParam(value = "subject") Integer subject,
+    public List<LotDto> getLotsBySubject(@RequestParam(value = "subject") String subjects,
                                          @RequestParam(value = "page", required = false) Integer page,
                                          @RequestParam(value = "size", required = false) Integer size) {
-        return torgiService.getLothBySubject(subject, page, size);
+        return torgiService.getLotsBySubject(subjects, page, size);
     }
 
-    @GetMapping("bidd-type")
-    public List<LotDto> getLotsByBiddType(@RequestParam(value = "subject") Integer subject,
-                                         @RequestParam(value = "page", required = false) Integer page,
-                                         @RequestParam(value = "size", required = false) Integer size) {
-        return torgiService.getLothBySubject(subject, page, size);
-    }
+    // TODO: write method
+//    @GetMapping("bidd-type")
+//    public List<LotDto> getLotsByBiddType(@RequestParam(value = "subject") Integer subject,
+//                                         @RequestParam(value = "page", required = false) Integer page,
+//                                         @RequestParam(value = "size", required = false) Integer size) {
+//        torgiService.пуе(subject, page, size);
+//    }
 }
