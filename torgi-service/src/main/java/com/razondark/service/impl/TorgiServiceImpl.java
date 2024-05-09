@@ -1,7 +1,9 @@
 package com.razondark.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.razondark.props.TorgiProperties;
 import com.razondark.service.TorgiService;
+import com.razondark.web.dto.CharacteristicValue;
 import com.razondark.web.dto.CharacteristicsDto;
 import com.razondark.web.dto.LotDto;
 import com.razondark.web.dto.LotInfoDto;
@@ -14,8 +16,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,12 @@ public class TorgiServiceImpl implements TorgiService {
         return UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParams(params)
                 .toUriString();
+    }
+
+    private void addToUriParamsIfNotNull(MultiValueMap<String, String> uriParams, String paramName, String paramValue) {
+        if (paramValue != null) {
+            uriParams.add(paramName, paramValue);
+        }
     }
 
     @Override
@@ -65,26 +74,42 @@ public class TorgiServiceImpl implements TorgiService {
     }
 
     @Override
-    public List<LotDto> getLots(String endDateFrom, String endDateTo, String regions, String cadastralNumber,
-                                String lotNumber, String categories, String permittedUse, Integer page, Integer size) {
+    public List<LotDto> getLots(String endDateFrom, String endDateTo, String regions, String category, String permittedUse,
+                                String squareFrom, String squareTo,
+                                String startPriceFrom, String startPriceTo,
+                                String cadCostFrom, String cadCostTo,
+                                String percentPriceCadFrom, String percentPriceCadTo,
+                                Integer page, Integer size, String text) {
         var uriParams = new LinkedMultiValueMap<String, String>();
+
+        uriParams.add("lotStatus", "PUBLISHED,APPLICATIONS_SUBMISSION,DETERMINING_WINNER,SUCCEED");
+        //uriParams.add("lotStatus", "APPLICATIONS_SUBMISSION");
+        uriParams.add("sort", "firstVersionPublicationDate,desc");
+
         uriParams.add("page", String.valueOf(page));
         uriParams.add("size", String.valueOf(size));
+        addToUriParamsIfNotNull(uriParams, "text", text);
 
-        if (endDateFrom != null) {
-            uriParams.add("biddEndFrom", endDateFrom);
+        // base params
+        addToUriParamsIfNotNull(uriParams, "biddEndFrom", endDateFrom);
+        addToUriParamsIfNotNull(uriParams, "biddEndTo", endDateTo);
+        addToUriParamsIfNotNull(uriParams, "dynSubjRF", regions);
+        addToUriParamsIfNotNull(uriParams, "catCode", category);
+
+        if (permittedUse != null) {
+            uriParams.add("chars", "msl-PermittedUse:" + permittedUse);
         }
 
-        if (endDateTo != null) {
-            uriParams.add("biddEndTo", endDateFrom);
-        }
-
-        if (regions != null) {
-            uriParams.add("dynSubjRF", regions);
-        }
-
-        if (cadastralNumber != null) {
-            // TODO
+        if (squareFrom != null || squareTo != null) {
+            if (squareFrom != null && squareTo != null) {
+                uriParams.add("chars", "dec-SquareZU:" + squareFrom + "~" + squareTo);
+            }
+            else if (squareFrom != null) {
+                uriParams.add("chars", "dec-SquareZU:" + squareFrom + "~");
+            }
+            else {
+                uriParams.add("chars", "dec-SquareZU:~" + squareTo);
+            }
         }
 
         var uri = uriBuilder(torgiProperties.getSearchLotsLink(), uriParams);
@@ -93,6 +118,44 @@ public class TorgiServiceImpl implements TorgiService {
         var dtos = lotMapper.jsonToDtoList(response);
 
         dtos.forEach(this::enrichLotDtoWithInfo);
+
+        // values params
+        if (startPriceFrom != null || startPriceTo != null || cadCostFrom != null || cadCostTo != null ||
+                percentPriceCadFrom != null || percentPriceCadTo != null) {
+            dtos.removeIf(lotDto -> {
+                if (lotDto.getPriceMin() != null) {
+                    // Условие для startPriceFrom и startPriceTo
+                    if (startPriceFrom != null && lotDto.getPriceMin().compareTo(new BigDecimal(startPriceFrom)) <= 0) {
+                        return true;
+                    }
+                    if (startPriceTo != null && lotDto.getPriceMin().compareTo(new BigDecimal(startPriceTo)) >= 0) {
+                        return true;
+                    }
+                }
+
+                if (lotDto.getCadCost() != null) {
+                    // Условие для cadCostFrom и cadCostTo
+                    if (cadCostFrom != null && lotDto.getCadCost().compareTo(new BigDecimal(cadCostFrom)) <= 0) {
+                        return true;
+                    }
+                    if (cadCostTo != null && lotDto.getCadCost().compareTo(new BigDecimal(cadCostTo)) >= 0) {
+                        return true;
+                    }
+                }
+
+                if (lotDto.getPercentPriceCad() != null) {
+                    // Условие для percentPriceCadFrom и percentPriceCadTo
+                    if (percentPriceCadFrom != null && lotDto.getPercentPriceCad()
+                            .compareTo(Double.parseDouble(percentPriceCadFrom)) <= 0) {
+                        return true;
+                    }
+                    return percentPriceCadTo != null && lotDto.getPercentPriceCad()
+                            .compareTo(Double.parseDouble(percentPriceCadTo)) >= 0;
+                }
+
+                return false;
+            });
+        }
 
         return dtos;
     }
@@ -107,6 +170,30 @@ public class TorgiServiceImpl implements TorgiService {
         if (infoResponse != null) {
             lotDto.setCadCost(infoResponse.getFeature().getAttrs().getCadCost());
             lotDto.setAreaValue(infoResponse.getFeature().getAttrs().getAreaValue());
+        }
+
+        // add permitted use to dto
+        var permUseObject = lotDto.getCharacteristics()
+                        .stream()
+                        .filter(i -> i.getCode().equalsIgnoreCase("PermittedUse"))
+                        .map(CharacteristicsDto::getCharacteristicValue)
+                .findFirst();
+
+        if (permUseObject.isPresent()) {
+            if (permUseObject.get() instanceof ArrayList<?>) {
+                var permittedUseList = new ArrayList<String>();
+
+                for (var item : (ArrayList<?>) permUseObject.get()) {
+                    var objectMapper = new ObjectMapper();
+
+                    if (item instanceof LinkedHashMap) {
+                        var value = objectMapper.convertValue(item, CharacteristicValue.class);
+                        permittedUseList.add(value.getName());
+                    }
+                }
+
+                lotDto.setPermittedUse(String.join(", ", permittedUseList));
+            }
         }
 
         calculatePercentPrice(lotDto);

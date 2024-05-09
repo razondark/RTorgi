@@ -24,7 +24,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommonDataServiceImpl implements CommonDataService {
-    //private final CacheService cacheService;
     private final RestTemplate restTemplate;
     private final TorgiProperties torgiProperties;
 

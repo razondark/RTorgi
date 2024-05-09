@@ -1,5 +1,7 @@
 package com.razondark.web.dto;
 
+import com.razondark.domain.category.Categories;
+import com.razondark.domain.dynamicAttributes.ValueAttribute;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,8 +22,10 @@ public class LotDto {
     private BigDecimal priceMin;
     private BigDecimal cadCost;
     private List<CharacteristicsDto> characteristics;
+    private String permittedUse;
     private String subjectRFCode;
     private Date biddEndTime;
     private BigDecimal areaValue;
     private Double percentPriceCad;
+    private ValueAttribute category; // same fields "code", "name"
 }

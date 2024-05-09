@@ -1,14 +1,11 @@
 package com.razondark.service.impl;
 
 import com.razondark.dto.LotDto;
-import com.razondark.dto.response.CategoriesResponse;
-import com.razondark.dto.response.LotResponse;
 import com.razondark.props.DataLinkProperties;
 import com.razondark.service.DataService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,14 +27,38 @@ public class DataServiceImpl implements DataService {
                 .toUriString();
     }
 
+    private void addToUriParamsIfNotNull(MultiValueMap<String, String> uriParams, String paramName, String paramValue) {
+        if (paramValue != null) {
+            uriParams.add(paramName, paramValue);
+        }
+    }
+
+//    @Override
+//    @SneakyThrows
+//    public List<LotDto> getAllLots(Integer page, Integer size) {
+//        var uriParams = new LinkedMultiValueMap<String, String>();
+//        uriParams.add("page", String.valueOf(page));
+//        uriParams.add("size", String.valueOf(size));
+//
+//        String uri = uriBuilder(dataLinkProperties.getAllDataLink(), uriParams);
+//
+//        var response = restTemplate.exchange(uri,
+//                HttpMethod.GET,
+//                null,
+//                new ParameterizedTypeReference<List<LotDto>>() {});
+//
+//        return response.getBody();
+//    }
+
     @Override
     @SneakyThrows
-    public List<LotDto> getAllLots(Integer page, Integer size) {
+    public List<LotDto> getLotsBySubjects(String subjects, Integer page, Integer size) {
         var uriParams = new LinkedMultiValueMap<String, String>();
         uriParams.add("page", String.valueOf(page));
         uriParams.add("size", String.valueOf(size));
+        uriParams.add("subject", subjects);
 
-        String uri = uriBuilder(dataLinkProperties.getAllDataLink(), uriParams);
+        String uri = uriBuilder(dataLinkProperties.getSubjectsDataLink(), uriParams);
 
         var response = restTemplate.exchange(uri,
                 HttpMethod.GET,
@@ -48,13 +69,32 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public List<LotDto> getLotsBySubjects(String subjects, Integer page, Integer size) {
+    @SneakyThrows
+    public List<LotDto> getLots(String endDateFrom, String endDateTo, String regions, String category, String permittedUse,
+                                String squareFrom, String squareTo, String startPriceFrom, String startPriceTo,
+                                String cadCostFrom, String cadCostTo, String percentPriceCadFrom, String percentPriceCadTo,
+                                Integer page, Integer size, String text) {
         var uriParams = new LinkedMultiValueMap<String, String>();
+
         uriParams.add("page", String.valueOf(page));
         uriParams.add("size", String.valueOf(size));
-        uriParams.add("subject", subjects);
 
-        String uri = uriBuilder(dataLinkProperties.getSubjectsDataLink(), uriParams);
+        addToUriParamsIfNotNull(uriParams, "end-date-from", endDateFrom);
+        addToUriParamsIfNotNull(uriParams, "end-date-to", endDateTo);
+        addToUriParamsIfNotNull(uriParams, "regions", regions);
+        addToUriParamsIfNotNull(uriParams, "category", category);
+        addToUriParamsIfNotNull(uriParams, "permitted-use", permittedUse);
+        addToUriParamsIfNotNull(uriParams, "square-from", squareFrom);
+        addToUriParamsIfNotNull(uriParams, "square-to", squareTo);
+        addToUriParamsIfNotNull(uriParams, "start-price-from", startPriceFrom);
+        addToUriParamsIfNotNull(uriParams, "start-price-to", startPriceTo);
+        addToUriParamsIfNotNull(uriParams, "cad-cost-from", cadCostFrom);
+        addToUriParamsIfNotNull(uriParams, "cad-cost-to", cadCostTo);
+        addToUriParamsIfNotNull(uriParams, "percent-price-cad-from", percentPriceCadFrom);
+        addToUriParamsIfNotNull(uriParams, "percent-price-cad-to", percentPriceCadTo);
+        addToUriParamsIfNotNull(uriParams, "text", text);
+
+        String uri = uriBuilder(dataLinkProperties.getAllDataLink(), uriParams);
 
         var response = restTemplate.exchange(uri,
                 HttpMethod.GET,

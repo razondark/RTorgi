@@ -20,8 +20,10 @@ public class LotDto {
     private BigDecimal priceMin;
     private BigDecimal cadCost;
     private List<CharacteristicsDto> characteristics;
+    private String permittedUse;
     private String subjectRFCode;
     private Date biddEndTime;
     private BigDecimal areaValue;
     private Double percentPriceCad;
+    private ValueAttribute category; // same fields "code", "name"
 }

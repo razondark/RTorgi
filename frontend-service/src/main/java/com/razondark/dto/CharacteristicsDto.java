@@ -11,4 +11,6 @@ public class CharacteristicsDto {
     private Object characteristicValue;
     private String name;
     private String code;
+    private String type;
+    private Object unit;
 }
