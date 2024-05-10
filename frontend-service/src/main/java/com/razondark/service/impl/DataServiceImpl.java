@@ -1,6 +1,7 @@
 package com.razondark.service.impl;
 
 import com.razondark.dto.LotDto;
+import com.razondark.dto.response.LotResponse;
 import com.razondark.props.DataLinkProperties;
 import com.razondark.service.DataService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,10 @@ import java.util.List;
 public class DataServiceImpl implements DataService {
     private final RestTemplate restTemplate;
     private final DataLinkProperties dataLinkProperties;
+
+    public String getLotPageLink() {
+        return dataLinkProperties.getLotPageLink();
+    }
 
     private String uriBuilder(String uri, MultiValueMap<String, String> params) {
         return UriComponentsBuilder.fromHttpUrl(uri)
@@ -70,10 +75,10 @@ public class DataServiceImpl implements DataService {
 
     @Override
     @SneakyThrows
-    public List<LotDto> getLots(String endDateFrom, String endDateTo, String regions, String category, String permittedUse,
-                                String squareFrom, String squareTo, String startPriceFrom, String startPriceTo,
-                                String cadCostFrom, String cadCostTo, String percentPriceCadFrom, String percentPriceCadTo,
-                                Integer page, Integer size, String text) {
+    public LotResponse getLots(String endDateFrom, String endDateTo, String regions, String category, String permittedUse,
+                               String squareFrom, String squareTo, String startPriceFrom, String startPriceTo,
+                               String cadCostFrom, String cadCostTo, String percentPriceCadFrom, String percentPriceCadTo,
+                               Integer page, Integer size, String text) {
         var uriParams = new LinkedMultiValueMap<String, String>();
 
         uriParams.add("page", String.valueOf(page));
@@ -92,14 +97,17 @@ public class DataServiceImpl implements DataService {
         addToUriParamsIfNotNull(uriParams, "cad-cost-to", cadCostTo);
         addToUriParamsIfNotNull(uriParams, "percent-price-cad-from", percentPriceCadFrom);
         addToUriParamsIfNotNull(uriParams, "percent-price-cad-to", percentPriceCadTo);
-        addToUriParamsIfNotNull(uriParams, "text", text);
 
         String uri = uriBuilder(dataLinkProperties.getAllDataLink(), uriParams);
+
+        if (text != null) {
+            uri += "&text=" + text;
+        }
 
         var response = restTemplate.exchange(uri,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<LotDto>>() {});
+                LotResponse.class);
 
         return response.getBody();
     }

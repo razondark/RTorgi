@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 public class LotDto {
     private String id;
+    private String cadNumber;
     private String lotStatus;
     private BiddTypeDto biddType;
     private String lotName;

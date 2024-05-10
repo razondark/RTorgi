@@ -1,5 +1,6 @@
-package com.razondark.view;
+package com.razondark.view.mainView;
 
+import com.razondark.dto.PageableDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,9 @@ public class FilterPanelItemsValues {
     private String percentPriceCadFrom = null;
     private String percentPriceCadTo = null;
     private String text = null;
+
+    private PageableDto pageInfo = null;
+    private Integer currentPage = 0;
+    private boolean isFirstPage = false;
+    private boolean isLastPage = false;
 }

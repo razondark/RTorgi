@@ -15,7 +15,6 @@ public class TorgiConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder()
-                //.errorHandler(new RestTemplateErrorHandler())
                 .build();
     }
 
@@ -23,7 +22,6 @@ public class TorgiConfig {
     public CacheManager cacheManager(Caffeine caffeine) {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCaffeine(caffeine);
-        //return new TransactionAwareCacheManagerProxy(cacheManager);
         return cacheManager;
     }
 
@@ -32,7 +30,7 @@ public class TorgiConfig {
         return Caffeine.newBuilder()
                 .initialCapacity(50)
                 .maximumSize(200)
-                .expireAfterAccess(60, TimeUnit.MINUTES)
+                .expireAfterAccess(30, TimeUnit.MINUTES)
                 //.refreshAfterWrite(30, TimeUnit.MINUTES)
                 .recordStats();
     }

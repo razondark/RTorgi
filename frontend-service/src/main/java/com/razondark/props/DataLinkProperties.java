@@ -10,4 +10,5 @@ import org.springframework.stereotype.Component;
 public class DataLinkProperties {
     private String allDataLink;
     private String subjectsDataLink;
+    private String lotPageLink;
 }

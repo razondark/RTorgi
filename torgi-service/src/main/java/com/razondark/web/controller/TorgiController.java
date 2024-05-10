@@ -2,6 +2,7 @@ package com.razondark.web.controller;
 
 import com.razondark.service.TorgiService;
 import com.razondark.web.dto.LotDto;
+import com.razondark.web.dto.response.LotResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,22 +31,22 @@ public class TorgiController {
     }
 
     @GetMapping
-    public List<LotDto> getLots(@RequestParam(value = "end-date-from", required = false) String endDateFrom,
-                                @RequestParam(value = "end-date-to", required = false) String endDateTo,
-                                @RequestParam(value = "regions", required = false) String regions,
-                                @RequestParam(value = "category", required = false) String category,
-                                @RequestParam(value = "permitted-use", required = false) String permittedUse,
-                                @RequestParam(value = "square-from", required = false) String squareFrom,
-                                @RequestParam(value = "square-to", required = false) String squareTo,
-                                @RequestParam(value = "start-price-from", required = false) String startPriceFrom,
-                                @RequestParam(value = "start-price-to", required = false) String startPriceTo,
-                                @RequestParam(value = "cad-cost-from", required = false) String cadCostFrom,
-                                @RequestParam(value = "cad-cost-to", required = false) String cadCostTo,
-                                @RequestParam(value = "percent-price-cad-from", required = false) String percentPriceCadFrom,
-                                @RequestParam(value = "percent-price-cad-to", required = false) String percentPriceCadTo,
-                                @RequestParam(value = "page", required = false) Integer page,
-                                @RequestParam(value = "size", required = false) Integer size,
-                                @RequestParam(value = "text", required = false) String text) {
+    public LotResponse getLots(@RequestParam(value = "end-date-from", required = false) String endDateFrom,
+                               @RequestParam(value = "end-date-to", required = false) String endDateTo,
+                               @RequestParam(value = "regions", required = false) String regions,
+                               @RequestParam(value = "category", required = false) String category,
+                               @RequestParam(value = "permitted-use", required = false) String permittedUse,
+                               @RequestParam(value = "square-from", required = false) String squareFrom,
+                               @RequestParam(value = "square-to", required = false) String squareTo,
+                               @RequestParam(value = "start-price-from", required = false) String startPriceFrom,
+                               @RequestParam(value = "start-price-to", required = false) String startPriceTo,
+                               @RequestParam(value = "cad-cost-from", required = false) String cadCostFrom,
+                               @RequestParam(value = "cad-cost-to", required = false) String cadCostTo,
+                               @RequestParam(value = "percent-price-cad-from", required = false) String percentPriceCadFrom,
+                               @RequestParam(value = "percent-price-cad-to", required = false) String percentPriceCadTo,
+                               @RequestParam(value = "page", required = false) Integer page,
+                               @RequestParam(value = "size", required = false) Integer size,
+                               @RequestParam(value = "text", required = false) String text) {
         return torgiService.getLots(endDateFrom, endDateTo, regions, category, permittedUse, squareFrom, squareTo,
                 startPriceFrom, startPriceTo, cadCostFrom, cadCostTo, percentPriceCadFrom, percentPriceCadTo,
                 page, size, text);
