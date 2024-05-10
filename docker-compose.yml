@@ -40,6 +40,7 @@ services:
       - FRONTEND_DATA_BY_SUBJECT_LINK=http://torgi-service:9090/api/v1/torgi/lots/search/subject
       - FRONTEND_ALL_DATA_LINK=http://torgi-service:9090/api/v1/torgi/lots/search
       - FRONTEND_LOT_PAGE_LINK=https://torgi.gov.ru/new/public/lots/lot/
+      - FRONTEND_MAP_EGRP=https://egrp365.org/map/?kadnum=
     depends_on:
       - torgi-service
 

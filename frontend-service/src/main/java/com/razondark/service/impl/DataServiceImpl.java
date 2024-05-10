@@ -26,6 +26,10 @@ public class DataServiceImpl implements DataService {
         return dataLinkProperties.getLotPageLink();
     }
 
+    public String getMapEGRPLink() {
+        return dataLinkProperties.getMapEGRP();
+    }
+
     private String uriBuilder(String uri, MultiValueMap<String, String> params) {
         return UriComponentsBuilder.fromHttpUrl(uri)
                 .queryParams(params)

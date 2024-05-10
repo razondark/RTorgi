@@ -47,7 +47,6 @@ public class MainFormView extends VerticalLayout {
     private final SpecificationsResponse specifications;
 
     private final FilterPanelItemsValues filterPanelItemsString;
-    private PageableDto pageableDto;
 
     private final Grid<LotDto> grid;
     //private final com.vaadin.flow.component.checkbox.Checkbox moreInfoCheckBox;
@@ -600,6 +599,19 @@ public class MainFormView extends VerticalLayout {
                                 }
                             }));
 
+            grid.addComponentColumn(lot -> {
+                        var cadNumber = lot.getCadNumber();
+
+                        if (cadNumber == null) {
+                            return null;
+                        }
+
+                        Anchor anchor = new Anchor(dataService.getMapEGRPLink() + cadNumber, "Link");
+                        anchor.setTarget("_blank"); // new page
+                        return anchor;
+                    })
+                    .setHeader("Карта");
+
 
             grid.getColumns().forEach(column -> column.setAutoWidth(true));
             return grid;
@@ -670,6 +682,7 @@ public class MainFormView extends VerticalLayout {
         datePicker.setValue(date);
         datePicker.setWidth(width);
         // all listener
+        datePicker.setLocale(new Locale("ru", "RU"));
 
         return datePicker;
     }

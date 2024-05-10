@@ -11,4 +11,5 @@ public class DataLinkProperties {
     private String allDataLink;
     private String subjectsDataLink;
     private String lotPageLink;
+    private String mapEGRP;
 }
