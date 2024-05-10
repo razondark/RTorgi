@@ -1,0 +1,48 @@
+#version: '3'
+
+services:
+  torgi-service:
+    build:
+      context: ./
+      dockerfile: torgi-service/Dockerfile
+    image: torgi-service
+    ports:
+      - "9090:9090"
+    networks:
+      - rtorgi_network
+    environment:
+      - JAVA_OPTS=-Xmx512M
+      - BIDD_TYPE_LINK=https://torgi.gov.ru/new/nsi/v1/BIDD_TYPE
+      - ELECTRONIC_PLATFORM_LINK=https://torgi.gov.ru/new/nsi/v1/ELECTRONIC_PLATFORM
+      - DYNAMIC_ATTR_SEARCH_OPTION_LINK=https://torgi.gov.ru/new/nsi/v1/DYNAMIC_ATTR_SEARCH_OPTION
+      - OWNERSHIP_FORM_LINK=https://torgi.gov.ru/new/nsi/v1/OWNERSHIP_FORM
+      - TYPE_TRANSACTION_LINK=https://torgi.gov.ru/new/nsi/v1/TYPE_TRANSACTION
+      - CATEGORIES_LINK=https://torgi.gov.ru/new/nsi/v1/CATEGORIES
+      - SPECIFICATIONS_LINK=https://torgi.gov.ru/new/nsi/v1/SPECIFICATIONS
+      - SEARCH_LOTS_LINK=https://torgi.gov.ru/new/api/public/lotcards/search
+      - LOT_INFO_LINK=https://pkkn.egrp365.org/api/features/1/
+
+  frontend-service:
+    build:
+      context: ./
+      dockerfile: frontend-service/Dockerfile
+    image: frontend-service
+    ports:
+      - "9091:9091"
+    networks:
+      - rtorgi_network
+    environment:
+      - JAVA_OPTS=-Xmx512Mcls
+      - FRONTEND_CATEGORIES_LINK=http://torgi-service:9090/api/v1/common-data/categories
+      - FRONTEND_SPECIFICATIONS_LINK=http://torgi-service:9090/api/v1/common-data/specifications
+      - FRONTEND_BIDD_TYPE_LINK=http://torgi-service:9090/api/v1/common-data/bidd-types
+      - FRONTEND_ATTRIBUTES_LINK=http://torgi-service:9090/api/v1/common-data/attributes
+      - FRONTEND_DATA_BY_SUBJECT_LINK=http://torgi-service:9090/api/v1/torgi/lots/search/subject
+      - FRONTEND_ALL_DATA_LINK=http://torgi-service:9090/api/v1/torgi/lots/search
+      - FRONTEND_LOT_PAGE_LINK=https://torgi.gov.ru/new/public/lots/lot/
+    depends_on:
+      - torgi-service
+
+networks:
+  rtorgi_network:
+    driver: bridge
