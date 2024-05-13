@@ -536,7 +536,7 @@ public class MainFormView extends VerticalLayout {
                         var value = formatter.format(item.getCadCost());
 
                         return value + " ₽";
-                    }));;
+                    }));
             grid.addColumn(LotDto::getPercentPriceCad)
                     .setHeader("% нач. цены от кад. стоим.")
                     .setSortable(true)
@@ -691,7 +691,7 @@ public class MainFormView extends VerticalLayout {
         var multiSelectComboBox = new MultiSelectComboBox<String>(title);
 
         multiSelectComboBox.setItems(items);
-        multiSelectComboBox.setAllowCustomValue(false); // Не разрешать ввод произвольных значений
+        multiSelectComboBox.setAllowCustomValue(false);
         multiSelectComboBox.setWidth(width);
 
         return multiSelectComboBox;
@@ -701,7 +701,7 @@ public class MainFormView extends VerticalLayout {
         var comboBox = new ComboBox<String>(title);
 
         comboBox.setItems(items);
-        comboBox.setAllowCustomValue(false); // Не разрешать ввод произвольных значений
+        comboBox.setAllowCustomValue(false);
         comboBox.setWidth(width);
 
         return comboBox;

@@ -10,6 +10,7 @@ services:
       - "9090:9090"
     networks:
       - rtorgi_network
+    restart: on-failure
     environment:
       - JAVA_OPTS=-Xmx512M
       - BIDD_TYPE_LINK=https://torgi.gov.ru/new/nsi/v1/BIDD_TYPE
@@ -31,6 +32,7 @@ services:
       - "80:9091"
     networks:
       - rtorgi_network
+    restart: on-failure
     environment:
       - JAVA_OPTS=-Xmx512Mcls
       - FRONTEND_CATEGORIES_LINK=http://torgi-service:9090/api/v1/common-data/categories
