@@ -162,7 +162,9 @@ public class TorgiServiceImpl implements TorgiService {
 
         var infoResponse = getLotInfo(lotDto.getCadNumber());
         if (infoResponse != null) {
-            lotDto.setCadCost(infoResponse.getFeature().getAttrs().getCadCost());
+            if (infoResponse.getFeature() != null && infoResponse.getFeature().getAttrs() != null) {
+                lotDto.setCadCost(infoResponse.getFeature().getAttrs().getCadCost());
+            }
         }
 
         calculatePercentPrice(lotDto);
